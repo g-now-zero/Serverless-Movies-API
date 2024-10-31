@@ -93,3 +93,5 @@ GetMovieSummary:
     - [ ] Basic resources (Functions, Cosmos DB, Blob Storage)
 - [ ] Implement db schema
 - [ ] Create first endpoint
+
+#
