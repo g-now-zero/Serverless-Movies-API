@@ -30,10 +30,23 @@ Requirements:
 
 **Azure OpenAI Service**: For the summary generation *which will connect to GetMovieSummary function
 
-## Deployment Choice 
-**IaC with Terraform**: resource group creation, cosmos DB account setup, etc.
+[Architecture diagram](/diagrams/architecture-diagram.png)
 
-**Azure CLI (Config Mgmt)**: db and container creation, storage container setup, etc.
+## Deployment Strategy
+### Docker Container Setup
+Container includes all necessary tools and data for deployment:
+- Terraform (IaC)
+- Azure CLI
+- Project data (images and movie information)
+- Deployment scripts
+
+### Infrastructure as Code (Terraform)
+Handles core Azure resource creation:
+- Resource groups
+- Cosmos DB account
+- Blob Storage account
+- Function Apps
+- API Management service
 
 ## Data Structure Design
 - Year-based documents with alphabetical subgrouping
@@ -61,10 +74,17 @@ GetMoviesByYear:
 GetMovieSummary:
 -> Year + alphabetical section lookup
 
+## Deployment Strategy
+**Azure CLI/Terraform docker container**: volume mounting if needed for any local file uploads
+
+
+
 ### TO-DO
-- [ ] Draw a diagram of the data flow through the chosen architecture
+- [X] Draw a diagram of the data flow through the chosen architecture
+- [ ] Finish deployment strategy and upload subsequent diagram
 - [ ] Find dataset
 - [ ] Clean up dataset based on requirements
 - [ ] Set up Azure infrastructure
+    - [ ] Basic resources (Functions, Cosmos DB, Blob Storage)
 - [ ] Implement db schema
 - [ ] Create first endpoint
