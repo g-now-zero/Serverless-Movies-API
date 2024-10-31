@@ -1,0 +1,26 @@
+{
+    "name": "Serverless-Movies-API Dev Container",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/azure-cli:1": {},
+        "ghcr.io/devcontainers/features/node:1": {},
+        "ghcr.io/devcontainers/features/python:1": {},
+        "ghcr.io/devcontainers-contrib/features/terraform-asdf:2": {}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-azuretools.vscode-azurefunctions",
+                "ms-python.python",
+                "hashicorp.terraform",
+                "ms-vscode.azure-account",
+                "ms-vscode.azurecli"
+            ]
+        }
+    },
+    "forwardPorts": [7071],
+    "postCreateCommand": "npm install -g azure-functions-core-tools@4 --unsafe-perm true"
+}
