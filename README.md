@@ -86,7 +86,8 @@ GetMovieSummary:
     - [X] Azure Functions Core Tools ready
     - [X] Terraform ready
     - [X] Azure CLI ready
-- [ ] Finish deployment strategy and upload subsequent diagram
+- [X] Finish deployment strategy and upload subsequent diagram
+- [ ] Update Deployment diagram with API layer
 - [ ] Find dataset
 - [ ] Clean up dataset based on requirements
 - [ ] Set up Azure infrastructure
