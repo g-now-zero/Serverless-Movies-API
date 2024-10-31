@@ -81,6 +81,11 @@ GetMovieSummary:
 
 ### TO-DO
 - [X] Draw a diagram of the data flow through the chosen architecture
+- [X] Convert development environment to a container with necessary dependencies:
+    - [X] All extensions are pre-installed
+    - [X] Azure Functions Core Tools ready
+    - [X] Terraform ready
+    - [X] Azure CLI ready
 - [ ] Finish deployment strategy and upload subsequent diagram
 - [ ] Find dataset
 - [ ] Clean up dataset based on requirements
