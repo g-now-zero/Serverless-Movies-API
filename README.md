@@ -77,7 +77,7 @@ GetMovieSummary:
 ## Deployment Strategy
 **Azure CLI/Terraform docker container**: volume mounting if needed for any local file uploads
 
-
+[Deployment diagram](diagrams/deployment-diagram.png)
 
 ### TO-DO
 - [X] Draw a diagram of the data flow through the chosen architecture
