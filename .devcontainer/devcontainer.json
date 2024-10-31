@@ -21,6 +21,10 @@
             ]
         }
     },
+    "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/root/.ssh,type=bind"
+    ], 
     "forwardPorts": [7071],
     "postCreateCommand": "npm install -g azure-functions-core-tools@4 --unsafe-perm true"
 }
