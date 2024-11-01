@@ -79,6 +79,11 @@ GetMovieSummary:
 
 [Deployment diagram](diagrams/deployment-diagram.png)
 
+## Dataset
+Choosing a small dataset for testing and functionality. Can scale if need be.
+
+[Dataset](https://gist.github.com/tiangechen/b68782efa49a16edaf07dc2cdaa855ea#file-movies-csv)
+
 ### TO-DO
 - [X] Draw a diagram of the data flow through the chosen architecture
 - [X] Convert development environment to a container with necessary dependencies:
@@ -87,12 +92,11 @@ GetMovieSummary:
     - [X] Terraform ready
     - [X] Azure CLI ready
 - [X] Finish deployment strategy and upload subsequent diagram
-- [ ] Update Deployment diagram with API layer
-- [ ] Find dataset
-- [ ] Clean up dataset based on requirements
-- [ ] Set up Azure infrastructure
-    - [ ] Basic resources (Functions, Cosmos DB, Blob Storage)
+- [X] Update Deployment diagram with API layer
+- [X] Find dataset
+- [X] Clean up dataset based on requirements
+- [X] Write a python script to pull poster images of titles in my dataset using a web service 
+- [X] Set up Azure infrastructure using Terraform and test resource creation
+    - [X] Basic resources (Functions, Cosmos DB, Blob Storage)
 - [ ] Implement db schema
 - [ ] Create first endpoint
-
-#
