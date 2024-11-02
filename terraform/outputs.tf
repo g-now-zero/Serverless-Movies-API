@@ -1,5 +1,5 @@
 output "function_app_name" {
-  value = azurerm_windows_function_app.main.name
+  value = azurerm_linux_function_app.main.name
 }
 
 output "cosmos_db_endpoint" {
