@@ -98,5 +98,19 @@ Choosing a small dataset for testing and functionality. Can scale if need be.
 - [X] Write a python script to pull poster images of titles in my dataset using a web service 
 - [X] Set up Azure infrastructure using Terraform and test resource creation
     - [X] Basic resources (Functions, Cosmos DB, Blob Storage)
-- [ ] Implement db schema
-- [ ] Create first endpoint
+- [X] Implement db schema
+- [ ] Set up local Functions project structure using func
+    - [ ] Python
+    - [ ] Configure
+- [ ] Implement GetMovies endpoint
+- [ ] Test locally
+- [ ] Deploy and test in Azure 
+- [ ] Implement data seeding
+- [ ] Create script to format CSV into Cosmos DB schema
+- [ ] Upload movie covers to Blob Storage
+- [ ] Seed formatted data into Cosmos DB
+- [ ] Create remaining endpoints
+- [ ] GetMoviesByYear
+- [ ] GetMovieSummary (and subsequent OpenAI integration)
+- [ ] Final testing and documentation cleanup
+- [ ] Document API usage
