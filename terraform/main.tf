@@ -70,7 +70,7 @@ resource "azurerm_cosmosdb_sql_container" "movies" {
   resource_group_name = azurerm_resource_group.main.name
   account_name        = azurerm_cosmosdb_account.main.name
   database_name       = azurerm_cosmosdb_sql_database.main.name
-  partition_key_paths = ["/id"]  
+  partition_key_paths = ["/year"]  
   
   indexing_policy {
     indexing_mode = "consistent"
@@ -79,8 +79,12 @@ resource "azurerm_cosmosdb_sql_container" "movies" {
       path = "/*"
     }
 
-    excluded_path {
-      path = "/\"_etag\"/?"
+    included_path {
+      path = "/year/?"
+    }
+
+    included_path {
+      path = "/alphabeticalGroups/*"
     }
   }
 }
