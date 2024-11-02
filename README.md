@@ -52,13 +52,13 @@ Handles core Azure resource creation:
 - Year-based documents with alphabetical subgrouping
 ```json
 {
-    "id": "<year>",
+    "id": "3129",
     "year": "<year>",
     "alphabetical": {
-        "a": { "movies": ["title": "Nosferatu".
-                          "genre": ""
-                          "coverURL": "",
-                          "generatedSummary": ""] },
+        "a": { "movies": ["title": "Nosferatu",
+                          "genre": "Romance",
+                          "coverURL": "myurl.com/1234",
+                          "generatedSummary": "It's about that vampire guy."] },
         "b": { "movies": [] }
     }
 }

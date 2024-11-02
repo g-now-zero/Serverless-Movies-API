@@ -99,6 +99,20 @@ resource "azurerm_service_plan" "main" {
   }
 }
 
+# Azure OpenAI Service
+resource "azurerm_cognitive_account" "openai" {
+  name                = "${var.project_name}-${var.environment}-openai"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.main.name
+  kind                = "OpenAI"
+  sku_name            = "S0"
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
 # Function App
 resource "azurerm_windows_function_app" "main" {
   name                       = "${var.project_name}-${var.environment}-func"
@@ -119,6 +133,8 @@ resource "azurerm_windows_function_app" "main" {
     WEBSITE_NODE_DEFAULT_VERSION = "~18"
     COSMOSDB_CONNECTION_STRING = azurerm_cosmosdb_account.main.primary_sql_connection_string
     STORAGE_CONNECTION_STRING = azurerm_storage_account.main.primary_connection_string
+    OPENAI_API_KEY = azurerm_cognitive_account.openai.primary_access_key
+    OPENAI_API_ENDPOINT = azurerm_cognitive_account.openai.endpoint
   }
 
   tags = {
