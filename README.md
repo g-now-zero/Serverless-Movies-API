@@ -85,7 +85,7 @@ Choosing a small dataset for testing and functionality. Can scale if need be.
 [Dataset](https://gist.github.com/tiangechen/b68782efa49a16edaf07dc2cdaa855ea#file-movies-csv)
 
 ### TO-DO
-- [X] Draw a diagram of the data flow through the chosen architecture
+- [X] Draw an architecture diagram and subsequent data flow for the project.
 - [X] Convert development environment to a container with necessary dependencies:
     - [X] All extensions are pre-installed
     - [X] Azure Functions Core Tools ready
@@ -99,11 +99,10 @@ Choosing a small dataset for testing and functionality. Can scale if need be.
 - [X] Set up Azure infrastructure using Terraform and test resource creation
     - [X] Basic resources (Functions, Cosmos DB, Blob Storage)
 - [X] Implement db schema
-- [ ] Set up local Functions project structure using func
-    - [ ] Python
-    - [ ] Configure
-- [ ] Implement GetMovies endpoint
-- [ ] Test locally
+- [X] Set up local Functions project structure using func
+    - [X] Python
+    - [X] Configure
+- [X] Implement GetMovies endpoint
 - [ ] Deploy and test in Azure 
 - [ ] Implement data seeding
 - [ ] Create script to format CSV into Cosmos DB schema
