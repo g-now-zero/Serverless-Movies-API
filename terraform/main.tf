@@ -94,7 +94,7 @@ resource "azurerm_service_plan" "main" {
   name                = "${var.project_name}-${var.environment}-asp"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
-  os_type            = "Windows"
+  os_type            = "Linux"
   sku_name           = "Y1" # Consumption plan for Functions
 
   tags = {
@@ -118,7 +118,7 @@ resource "azurerm_cognitive_account" "openai" {
 }
 
 # Function App
-resource "azurerm_windows_function_app" "main" {
+resource "azurerm_linux_function_app" "main" {
   name                       = "${var.project_name}-${var.environment}-func"
   location                   = azurerm_resource_group.main.location
   resource_group_name        = azurerm_resource_group.main.name
@@ -128,13 +128,12 @@ resource "azurerm_windows_function_app" "main" {
 
   site_config {
     application_stack {
-      node_version = "~18"
+      python_version = "3.11"
     }
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME = "node"
-    WEBSITE_NODE_DEFAULT_VERSION = "~18"
+    FUNCTIONS_WORKER_RUNTIME = "python"
     COSMOSDB_CONNECTION_STRING = azurerm_cosmosdb_account.main.primary_sql_connection_string
     STORAGE_CONNECTION_STRING = azurerm_storage_account.main.primary_connection_string
     OPENAI_API_KEY = azurerm_cognitive_account.openai.primary_access_key
