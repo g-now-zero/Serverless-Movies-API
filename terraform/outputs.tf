@@ -14,3 +14,8 @@ output "primary_storage_connection_string" {
   value     = azurerm_storage_account.main.primary_connection_string
   sensitive = true
 }
+
+output "cosmos_db_connection_string" {
+  value     = azurerm_cosmosdb_account.main.primary_sql_connection_string
+  sensitive = true
+}

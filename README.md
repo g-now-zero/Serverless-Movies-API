@@ -52,14 +52,16 @@ Handles core Azure resource creation:
 - Year-based documents with alphabetical subgrouping
 ```json
 {
-    "id": "3129",
-    "year": "<year>",
-    "alphabetical": {
-        "a": { "movies": ["title": "Nosferatu",
-                          "genre": "Romance",
-                          "coverURL": "myurl.com/1234",
-                          "generatedSummary": "It's about that vampire guy."] },
-        "b": { "movies": [] }
+    "id": "year_2008",
+    "year": 2008,
+    "t": {
+        "movies": [
+            {
+                "title": "The Dark Knight",
+                "genre": "Action",
+                "year": 2008
+            }
+        ]
     }
 }
 ```
@@ -102,14 +104,18 @@ Choosing a small dataset for testing and functionality. Can scale if need be.
 - [X] Set up local Functions project structure using func
     - [X] Python
     - [X] Configure
-- [X] Implement GetMovies endpoint
-- [ ] Deploy and test in Azure 
-- [ ] Implement data seeding
-- [ ] Create script to format CSV into Cosmos DB schema
+- [X] Implement basic GetMovies endpoint
+- [X] Deploy and test in Azure 
+- [X] Implement data seeding
+- [X] Create script to format CSV into Cosmos DB schema
 - [ ] Upload movie covers to Blob Storage
-- [ ] Seed formatted data into Cosmos DB
-- [ ] Create remaining endpoints
+- [ ] GetMovies
 - [ ] GetMoviesByYear
 - [ ] GetMovieSummary (and subsequent OpenAI integration)
+- [ ] Add API Management layer
+    - [ ] Add APIM to Terraform config
+    - [ ] Configure API endpoints in APIM
+    - [ ] Set up policies (rate limiting, cors, etc)
+    - [ ] Test all endpoints through APIM
 - [ ] Final testing and documentation cleanup
 - [ ] Document API usage
