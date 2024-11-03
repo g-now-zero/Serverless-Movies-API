@@ -138,6 +138,8 @@ resource "azurerm_linux_function_app" "main" {
     STORAGE_CONNECTION_STRING = azurerm_storage_account.main.primary_connection_string
     OPENAI_API_KEY = azurerm_cognitive_account.openai.primary_access_key
     OPENAI_API_ENDPOINT = azurerm_cognitive_account.openai.endpoint
+    EnableWorkerIndexing = "true"
+    SCM_DO_BUILD_DURING_DEPLOYMENT = "true"
   }
 
   tags = {

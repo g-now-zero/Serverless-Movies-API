@@ -1,22 +1,20 @@
 import azure.functions as func
-import datetime
-import json
 import logging
 from azure.cosmos import CosmosClient
 import os
+import json
 
 app = func.FunctionApp()
 
-# Initialize Cosmos DB client
-cosmos_client = CosmosClient.from_connection_string(os.environ["COSMOSDB_CONNECTION_STRING"])
-database = cosmos_client.get_database_client("moviedb")
-container = database.get_container_client("movies")
-
-@app.route(route="GetMovies", auth_level=func.AuthLevel.Function)
-def GetMovies(req: func.HttpRequest) -> func.HttpResponse:
+@app.route(route="getmovies")
+def get_movies(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Testing Cosmos DB connectivity')
 
     try:
+        cosmos_client = CosmosClient.from_connection_string(os.environ["COSMOSDB_CONNECTION_STRING"])
+        database = cosmos_client.get_database_client("moviedb")
+        container = database.get_container_client("movies")
+
         movies = list(container.query_items(
             query="SELECT * FROM movies c",
             enable_cross_partition_query=True
