@@ -113,6 +113,38 @@ resource "azurerm_cognitive_account" "openai" {
   }
 }
 
+# In main.tf
+
+# Azure OpenAI Service
+resource "azurerm_cognitive_account" "openai" {
+  name                = "${var.project_name}-${var.environment}-openai"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.main.name
+  kind                = "OpenAI"
+  sku_name            = "S0"
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
+# Azure OpenAI Model Deployment
+resource "azurerm_cognitive_deployment" "gpt35" {
+  name                 = "gpt-35-turbo-16k"
+  cognitive_account_id = azurerm_cognitive_account.openai.id
+  model {
+    format  = "OpenAI"
+    name    = "gpt-35-turbo-16k"
+    version = "0613"
+  }
+
+  scale {
+    type = "Standard"
+    capacity = 1
+  }
+}
+
 # Function App
 resource "azurerm_linux_function_app" "main" {
   name                       = "${var.project_name}-${var.environment}-func"
@@ -129,12 +161,14 @@ resource "azurerm_linux_function_app" "main" {
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME = "python"
-    COSMOSDB_CONNECTION_STRING = azurerm_cosmosdb_account.main.primary_sql_connection_string
-    STORAGE_CONNECTION_STRING = azurerm_storage_account.main.primary_connection_string
-    OPENAI_API_KEY = azurerm_cognitive_account.openai.primary_access_key
-    OPENAI_API_ENDPOINT = azurerm_cognitive_account.openai.endpoint
-    EnableWorkerIndexing = "true"
+    FUNCTIONS_WORKER_RUNTIME       = "python"
+    COSMOSDB_CONNECTION_STRING     = azurerm_cosmosdb_account.main.primary_sql_connection_string
+    STORAGE_CONNECTION_STRING      = azurerm_storage_account.main.primary_connection_string
+    OPENAI_API_ENDPOINT           = azurerm_cognitive_account.openai.endpoint
+    OPENAI_API_KEY                = azurerm_cognitive_account.openai.primary_access_key
+    OPENAI_DEPLOYMENT_NAME        = azurerm_cognitive_deployment.gpt35.name
+    OPENAI_API_VERSION           = "2024-08-01-preview"
+    EnableWorkerIndexing          = "true"
     SCM_DO_BUILD_DURING_DEPLOYMENT = "true"
   }
 
