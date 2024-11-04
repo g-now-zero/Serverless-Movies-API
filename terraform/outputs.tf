@@ -21,18 +21,28 @@ output "cosmos_db_connection_string" {
 }
 
 output "openai_endpoint" {
-  value = azurerm_cognitive_account.openai.endpoint
+  value = module.openai.openai_endpoint
 }
 
 output "openai_api_key" {
-  value     = azurerm_cognitive_account.openai.primary_access_key
+  value     = module.openai.openai_primary_key
   sensitive = true
 }
 
 output "openai_deployment_name" {
-  value = azurerm_cognitive_deployment.gpt35.name
+  value = "gpt-35-turbo-16k" 
 }
 
 output "api_management_gateway_url" {
   value = "https://${azurerm_api_management.main.gateway_url}"
+}
+
+output "apim_gateway_url" {
+  value = "https://${azurerm_api_management.main.gateway_url}"
+  description = "Gateway URL for the API Management service"
+}
+
+output "api_base_url" {
+  value = "https://${azurerm_api_management.main.gateway_url}/api"
+  description = "Base URL for API endpoints"
 }

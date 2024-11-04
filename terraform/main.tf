@@ -99,50 +99,35 @@ resource "azurerm_service_plan" "main" {
   }
 }
 
-# Azure OpenAI Service
-resource "azurerm_cognitive_account" "openai" {
-  name                = "${var.project_name}-${var.environment}-openai"
+# Azure OpenAI Service using the official module
+module "openai" {
+  source              = "Azure/openai/azurerm"
+  version             = "0.1.3"
   location            = var.location
   resource_group_name = azurerm_resource_group.main.name
-  kind                = "OpenAI"
+  account_name        = "${var.project_name}-${var.environment}-openai"
   sku_name            = "S0"
+  public_network_access_enabled = true
+
+  deployment = {
+    "gpt-35-turbo" = {
+      name          = "gpt-35-turbo-16k"
+      model_format  = "OpenAI"
+      model_name    = "gpt-35-turbo-16k"
+      model_version = "0613"
+      scale_type    = "Standard"
+      capacity      = 1
+    }
+  }
 
   tags = {
     Environment = var.environment
     Project     = var.project_name
   }
-}
 
-# In main.tf
-
-# Azure OpenAI Service
-resource "azurerm_cognitive_account" "openai" {
-  name                = "${var.project_name}-${var.environment}-openai"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.main.name
-  kind                = "OpenAI"
-  sku_name            = "S0"
-
-  tags = {
-    Environment = var.environment
-    Project     = var.project_name
-  }
-}
-
-# Azure OpenAI Model Deployment
-resource "azurerm_cognitive_deployment" "gpt35" {
-  name                 = "gpt-35-turbo-16k"
-  cognitive_account_id = azurerm_cognitive_account.openai.id
-  model {
-    format  = "OpenAI"
-    name    = "gpt-35-turbo-16k"
-    version = "0613"
-  }
-
-  scale {
-    type = "Standard"
-    capacity = 1
-  }
+  depends_on = [
+    azurerm_resource_group.main
+  ]
 }
 
 # Function App
@@ -164,9 +149,9 @@ resource "azurerm_linux_function_app" "main" {
     FUNCTIONS_WORKER_RUNTIME       = "python"
     COSMOSDB_CONNECTION_STRING     = azurerm_cosmosdb_account.main.primary_sql_connection_string
     STORAGE_CONNECTION_STRING      = azurerm_storage_account.main.primary_connection_string
-    OPENAI_API_ENDPOINT           = azurerm_cognitive_account.openai.endpoint
-    OPENAI_API_KEY                = azurerm_cognitive_account.openai.primary_access_key
-    OPENAI_DEPLOYMENT_NAME        = azurerm_cognitive_deployment.gpt35.name
+    OPENAI_API_ENDPOINT           = module.openai.openai_endpoint
+    OPENAI_API_KEY                = module.openai.openai_primary_key
+    OPENAI_DEPLOYMENT_NAME        = "gpt-35-turbo-16k"  # This matches the name in our module deployment
     OPENAI_API_VERSION           = "2024-08-01-preview"
     EnableWorkerIndexing          = "true"
     SCM_DO_BUILD_DURING_DEPLOYMENT = "true"
@@ -178,6 +163,12 @@ resource "azurerm_linux_function_app" "main" {
   }
 }
 
+data "azurerm_function_app_host_keys" "main" {
+  name                = azurerm_linux_function_app.main.name
+  resource_group_name = azurerm_resource_group.main.name
+  depends_on = [azurerm_linux_function_app.main]
+}
+
 # API Management Service
 resource "azurerm_api_management" "main" {
   name                = "${var.project_name}-${var.environment}-apim"
@@ -185,7 +176,7 @@ resource "azurerm_api_management" "main" {
   resource_group_name = azurerm_resource_group.main.name
   publisher_name      = "Movie API Publisher"
   publisher_email     = "admin@movieapi.com"
-  sku_name           = "Consumption_0"  # Using consumption tier for serverless
+  sku_name           = "Consumption_0"
 
   tags = {
     Environment = var.environment
@@ -193,64 +184,31 @@ resource "azurerm_api_management" "main" {
   }
 }
 
-# API Management API
+# Store function key as a named value
+resource "azurerm_api_management_named_value" "function_key" {
+  name                = "function-key"
+  resource_group_name = azurerm_resource_group.main.name
+  api_management_name = azurerm_api_management.main.name
+  display_name        = "function-key"
+  value              = data.azurerm_function_app_host_keys.main.default_function_key
+  secret             = true
+}
+
+# API Configuration
 resource "azurerm_api_management_api" "movies" {
   name                = "movies-api"
   resource_group_name = azurerm_resource_group.main.name
   api_management_name = azurerm_api_management.main.name
   revision           = "1"
   display_name       = "Movies API"
-  path               = "api"
+  path               = "api"  # Adding path to match Function App
   protocols          = ["https"]
   service_url        = "https://${azurerm_linux_function_app.main.default_hostname}"
-
-  import {
-    content_format = "openapi"
-    content_value  = <<EOF
-openapi: 3.0.0
-info:
-  title: Movies API
-  version: '1.0'
-paths:
-  /api/getmovies:
-    get:
-      summary: Get all movies
-      operationId: getAllMovies
-      responses:
-        '200':
-          description: List of all movies
-  /api/getmoviesbyyear:
-    get:
-      summary: Get movies by year
-      operationId: getMoviesByYear
-      parameters:
-        - name: year
-          in: query
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: List of movies for specified year
-  /api/getmoviesummary:
-    get:
-      summary: Get AI-generated movie summary
-      operationId: getMovieSummary
-      parameters:
-        - name: title
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Movie summary
-EOF
-  }
+  subscription_required = false
 }
 
-# Rate limiting policy
-resource "azurerm_api_management_api_policy" "rate_limit" {
+# API Policy with corrected base-url
+resource "azurerm_api_management_api_policy" "movies" {
   api_name            = azurerm_api_management_api.movies.name
   api_management_name = azurerm_api_management.main.name
   resource_group_name = azurerm_resource_group.main.name
@@ -259,7 +217,10 @@ resource "azurerm_api_management_api_policy" "rate_limit" {
 <policies>
   <inbound>
     <base />
-    <rate-limit calls="10" renewal-period="60" />
+    <set-backend-service base-url="https://${azurerm_linux_function_app.main.default_hostname}/api" />
+    <set-query-parameter name="code" exists-action="override">
+      <value>{{function-key}}</value>
+    </set-query-parameter>
     <cors>
       <allowed-origins>
         <origin>*</origin>
@@ -274,6 +235,67 @@ resource "azurerm_api_management_api_policy" "rate_limit" {
       </allowed-headers>
     </cors>
   </inbound>
+  <backend>
+    <forward-request />
+  </backend>
+  <outbound>
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
 </policies>
 XML
+}
+
+# Operations
+resource "azurerm_api_management_api_operation" "get_movies" {
+  operation_id        = "get-movies"
+  api_name           = azurerm_api_management_api.movies.name
+  api_management_name = azurerm_api_management.main.name
+  resource_group_name = azurerm_resource_group.main.name
+  display_name       = "Get Movies"
+  method             = "GET"
+  url_template       = "/getmovies"
+  description        = "Get all movies"
+}
+
+resource "azurerm_api_management_api_operation" "get_movies_by_year" {
+  operation_id        = "get-movies-by-year"
+  api_name           = azurerm_api_management_api.movies.name
+  api_management_name = azurerm_api_management.main.name
+  resource_group_name = azurerm_resource_group.main.name
+  display_name       = "Get Movies by Year"
+  method             = "GET"
+  url_template       = "/getmoviesbyyear"
+  description        = "Get movies by year"
+
+  request {
+    query_parameter {
+      name          = "year"
+      type          = "number"
+      required      = true
+      description   = "Year to filter movies"
+    }
+  }
+}
+
+resource "azurerm_api_management_api_operation" "get_movie_summary" {
+  operation_id        = "get-movie-summary"
+  api_name           = azurerm_api_management_api.movies.name
+  api_management_name = azurerm_api_management.main.name
+  resource_group_name = azurerm_resource_group.main.name
+  display_name       = "Get Movie Summary"
+  method             = "GET"
+  url_template       = "/getmoviesummary"
+  description        = "Get AI-generated movie summary"
+
+  request {
+    query_parameter {
+      name          = "title"
+      type          = "string"
+      required      = true
+      description   = "Movie title"
+    }
+  }
 }
