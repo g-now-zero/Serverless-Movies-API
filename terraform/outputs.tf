@@ -32,3 +32,7 @@ output "openai_api_key" {
 output "openai_deployment_name" {
   value = azurerm_cognitive_deployment.gpt35.name
 }
+
+output "api_management_gateway_url" {
+  value = "https://${azurerm_api_management.main.gateway_url}"
+}

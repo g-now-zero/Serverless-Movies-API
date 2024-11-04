@@ -177,3 +177,103 @@ resource "azurerm_linux_function_app" "main" {
     Project     = var.project_name
   }
 }
+
+# API Management Service
+resource "azurerm_api_management" "main" {
+  name                = "${var.project_name}-${var.environment}-apim"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  publisher_name      = "Movie API Publisher"
+  publisher_email     = "admin@movieapi.com"
+  sku_name           = "Consumption_0"  # Using consumption tier for serverless
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}
+
+# API Management API
+resource "azurerm_api_management_api" "movies" {
+  name                = "movies-api"
+  resource_group_name = azurerm_resource_group.main.name
+  api_management_name = azurerm_api_management.main.name
+  revision           = "1"
+  display_name       = "Movies API"
+  path               = "api"
+  protocols          = ["https"]
+  service_url        = "https://${azurerm_linux_function_app.main.default_hostname}"
+
+  import {
+    content_format = "openapi"
+    content_value  = <<EOF
+openapi: 3.0.0
+info:
+  title: Movies API
+  version: '1.0'
+paths:
+  /api/getmovies:
+    get:
+      summary: Get all movies
+      operationId: getAllMovies
+      responses:
+        '200':
+          description: List of all movies
+  /api/getmoviesbyyear:
+    get:
+      summary: Get movies by year
+      operationId: getMoviesByYear
+      parameters:
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of movies for specified year
+  /api/getmoviesummary:
+    get:
+      summary: Get AI-generated movie summary
+      operationId: getMovieSummary
+      parameters:
+        - name: title
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Movie summary
+EOF
+  }
+}
+
+# Rate limiting policy
+resource "azurerm_api_management_api_policy" "rate_limit" {
+  api_name            = azurerm_api_management_api.movies.name
+  api_management_name = azurerm_api_management.main.name
+  resource_group_name = azurerm_resource_group.main.name
+
+  xml_content = <<XML
+<policies>
+  <inbound>
+    <base />
+    <rate-limit calls="10" renewal-period="60" />
+    <cors>
+      <allowed-origins>
+        <origin>*</origin>
+      </allowed-origins>
+      <allowed-methods>
+        <method>GET</method>
+        <method>POST</method>
+        <method>OPTIONS</method>
+      </allowed-methods>
+      <allowed-headers>
+        <header>*</header>
+      </allowed-headers>
+    </cors>
+  </inbound>
+</policies>
+XML
+}
