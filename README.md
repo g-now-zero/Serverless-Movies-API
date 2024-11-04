@@ -111,11 +111,10 @@ Choosing a small dataset for testing and functionality. Can scale if need be.
 - [X] Upload movie covers to Blob Storage
 - [X] GetMovies
 - [X] GetMoviesByYear
-- [ ] GetMovieSummary (and subsequent OpenAI integration)
-- [ ] Add API Management layer
-    - [ ] Add APIM to Terraform config
-    - [ ] Configure API endpoints in APIM
-    - [ ] Set up policies (rate limiting, cors, etc)
-    - [ ] Test all endpoints through APIM
+- [X] GetMovieSummary (and subsequent OpenAI integration)
+- [X] Add API Management layer
+    - [X] Add APIM to Terraform config
+    - [X] Configure API endpoints in APIM
+    - [X] Test all endpoints through APIM
 - [ ] Final testing and documentation cleanup
 - [ ] Document API usage
