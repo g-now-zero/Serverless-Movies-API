@@ -108,9 +108,9 @@ Choosing a small dataset for testing and functionality. Can scale if need be.
 - [X] Deploy and test in Azure 
 - [X] Implement data seeding
 - [X] Create script to format CSV into Cosmos DB schema
-- [ ] Upload movie covers to Blob Storage
-- [ ] GetMovies
-- [ ] GetMoviesByYear
+- [X] Upload movie covers to Blob Storage
+- [X] GetMovies
+- [X] GetMoviesByYear
 - [ ] GetMovieSummary (and subsequent OpenAI integration)
 - [ ] Add API Management layer
     - [ ] Add APIM to Terraform config

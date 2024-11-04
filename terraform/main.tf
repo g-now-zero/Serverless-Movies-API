@@ -82,10 +82,6 @@ resource "azurerm_cosmosdb_sql_container" "movies" {
     included_path {
       path = "/year/?"
     }
-
-    included_path {
-      path = "/alphabeticalGroups/*"
-    }
   }
 }
 
