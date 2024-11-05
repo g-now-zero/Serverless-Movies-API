@@ -192,6 +192,10 @@ resource "azurerm_api_management_named_value" "function_key" {
   display_name        = "function-key"
   value              = data.azurerm_function_app_host_keys.main.default_function_key
   secret             = true
+
+  lifecycle {
+    create_before_destroy = false
+  }
 }
 
 # API Configuration
