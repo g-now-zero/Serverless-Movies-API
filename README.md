@@ -10,17 +10,6 @@ A serverless Azure-based API that provides basic movie information, cover image 
 ## Objective
 Create a scalable, serverless API that provides movie information using Azure Functions, with AI-powered movie summaries.
 
-## Architecture Overview
-
-![Deployment Diagram](/diagrams/deployment-diagram.png)
-
-The deployment process is fully automated through Terraform and shell scripts, managing:
-- Infrastructure provisioning
-- Function deployment
-- Data seeding
-- Movie cover uploads
-- API configuration
-
 ## Requirements
 
 ### Prerequisites
@@ -100,6 +89,17 @@ The API provides three main endpoints:
 - `GET /api/getmovies` - Returns all movies with their metadata and cover URLs
 - `GET /api/getmoviesbyyear?year={year}` - Returns movies from a specific year
 - `GET /api/getmoviesummary?title={title}` - Returns an AI-generated summary for a movie
+
+## Architecture Overview
+
+![Deployment Diagram](/diagrams/deployment-diagram.png)
+
+The deployment process is fully automated through Terraform and shell scripts, managing:
+- Infrastructure provisioning
+- Function deployment
+- Data seeding
+- Movie cover uploads
+- API configuration
 
 ### Data Structure
 ```json
