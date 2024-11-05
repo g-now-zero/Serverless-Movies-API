@@ -211,7 +211,7 @@ resource "azurerm_api_management_api" "movies" {
   subscription_required = false
 }
 
-# API Policy with corrected base-url
+# API Policy
 resource "azurerm_api_management_api_policy" "movies" {
   api_name            = azurerm_api_management_api.movies.name
   api_management_name = azurerm_api_management.main.name
